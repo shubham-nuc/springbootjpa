@@ -37,7 +37,7 @@ public class UserDataServiceImpl implements IUserDataService {
 	@Override
 	public String addUser(User user) {
 		this.users.add(user);
-		return "User Added Successully";
+		return "User Added Successully.";
 	}
 	@Override
 	public String deleteUser(int userId) {
