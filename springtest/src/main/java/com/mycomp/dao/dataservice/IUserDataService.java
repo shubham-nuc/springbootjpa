@@ -2,18 +2,19 @@ package com.mycomp.dao.dataservice;
 
 import java.util.List;
 
-import com.mycomp.Model.User;
+import com.mycomp.Model.UserDTO;
+import com.mycomp.dao.entity.UserEntity;
 
 public interface IUserDataService {
 	
-	public List<User> getAllUsers();
+	public List<UserDTO> getAllUsers();
 
-	public String addUser(User user);
+	public String addUser(UserEntity userEntity);
 
 	public String deleteUser(int userId);
 
-	public User getUsersById(int userId);
+	public UserDTO getUsersById(int userId);
 
-	public User getUsersById(String userName);
+	public UserDTO getUsersById(String userName);
 
 }

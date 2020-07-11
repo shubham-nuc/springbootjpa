@@ -3,7 +3,7 @@ package com.mycomp.Model;
 import lombok.Data;
 
 @Data
-public class User {
+public class UserDTO {
 	
 	private int id;
 	private String name;

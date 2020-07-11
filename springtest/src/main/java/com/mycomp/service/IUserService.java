@@ -2,18 +2,18 @@ package com.mycomp.service;
 
 import java.util.List;
 
-import com.mycomp.Model.User;
+import com.mycomp.Model.UserDTO;
 
 public interface IUserService {
 	
-	public List<User> getAllUsers();
+	public List<UserDTO> getAllUsers();
 
-	public String addUser(User user);
+	public String addUser(UserDTO user);
 
 	public String deleteUser(int userId);
 
-	public User getUsersByName(String userName);
+	public UserDTO getUsersByName(String userName);
 
-	public User getUsersById(int userId);
+	public UserDTO getUsersById(int userId);
 
 }

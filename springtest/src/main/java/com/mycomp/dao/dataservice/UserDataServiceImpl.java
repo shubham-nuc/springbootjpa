@@ -5,60 +5,59 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.mycomp.Model.User;
+import com.mycomp.Model.UserDTO;
+import com.mycomp.dao.entity.UserEntity;
+import com.mycomp.dao.repository.UserRepository;
 
 @Service
 public class UserDataServiceImpl implements IUserDataService {
 	
-	public UserDataServiceImpl() {
-		User user1=new User();
-		user1.setId(1);
-		user1.setName("Shubham");
-		user1.setAge(30);
-		user1.setCity("Chhachhrauli");
-		
-		User user2=new User();
-		user2.setId(2);
-		user2.setName("Kunal");
-		user2.setAge(32);
-		user2.setCity("Amritsar");
-		
-		users.add(user1);
-		users.add(user2);
-	}
+	@Autowired
+	private UserRepository userRepository;
+	
+	@Value("${user.success.msg}")
+	private String successMsg;
+	
+	@Value("${user.delete.msg}")
+	private String deleteMsg;
+	
+	@Value("${no.user.msg}")
+	private String noUserMsg;
 
-	List<User> users=new ArrayList<>();
+	List<UserDTO> users=new ArrayList<>();
 	@Override
-	public List<User> getAllUsers() {
+	public List<UserDTO> getAllUsers() {
 		return users;
 	}
 	@Override
-	public String addUser(User user) {
-		this.users.add(user);
-		return "User Added Successully.";
+	public String addUser(UserEntity user) {
+		userRepository.save(user);
+		return successMsg;
 	}
 	@Override
 	public String deleteUser(int userId) {
-		String message="No User Found";
-		ListIterator<User> itr=users.listIterator();
+		String message=noUserMsg;
+		ListIterator<UserDTO> itr=users.listIterator();
 		while(itr.hasNext()) {
-			User user=(User) itr.next();
+			UserDTO user=(UserDTO) itr.next();
 			int id= user.getId();
 			if(id==userId) {
 				users.remove(user);
-				message="User Deleted Successully";
+				message=deleteMsg;
 				break;
 			}
 		}
 		return message;
 	}
 	@Override
-	public User getUsersById(int userId) {
-		ListIterator<User> itr=users.listIterator();
+	public UserDTO getUsersById(int userId) {
+		ListIterator<UserDTO> itr=users.listIterator();
 		while(itr.hasNext()) {
-			User user=(User) itr.next();
+			UserDTO user=(UserDTO) itr.next();
 			int id= user.getId();
 			if(id==userId) {
 				return user;
@@ -67,10 +66,10 @@ public class UserDataServiceImpl implements IUserDataService {
 		return null;
 	}
 	@Override
-	public User getUsersById(String userName) {
-		ListIterator<User> itr=users.listIterator();
+	public UserDTO getUsersById(String userName) {
+		ListIterator<UserDTO> itr=users.listIterator();
 		while(itr.hasNext()) {
-			User user=(User) itr.next();
+			UserDTO user=(UserDTO) itr.next();
 			String name= user.getName();
 			if(userName.equalsIgnoreCase(name)) {
 				return user;

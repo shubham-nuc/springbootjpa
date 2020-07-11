@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mycomp.Model.User;
+import com.mycomp.Model.UserDTO;
 import com.mycomp.service.IUserService;
 
 /**
@@ -37,14 +37,14 @@ public class UserController {
 	@GET
 	@Path("/users")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<User> getAllUsers() {
+	public List<UserDTO> getAllUsers() {
 		return userService.getAllUsers();
 	}
 	
 	@GET
 	@Path("/user")
 	@Produces(MediaType.APPLICATION_JSON)
-	public User getOneUser(@QueryParam("id") int id,@QueryParam("name") String name ) {
+	public UserDTO getOneUser(@QueryParam("id") int id,@QueryParam("name") String name ) {
 		if(id!=0) {
 			return userService.getUsersById(id);
 		}
@@ -57,7 +57,7 @@ public class UserController {
 	@POST
 	@Path("/addUser")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String addUser(@RequestBody User user) {
+	public String addUser(@RequestBody UserDTO user) {
 		return userService.addUser(user);
 	}
 	
