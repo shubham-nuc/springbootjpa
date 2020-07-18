@@ -1,20 +1,23 @@
 package com.mycomp.dao.dataservice;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.mycomp.Model.UserDTO;
 import com.mycomp.dao.entity.UserEntity;
 
 public interface IUserDataService {
 	
-	public List<UserDTO> getAllUsers();
+	public Optional<List<UserDTO>> getAllUsers();
 
-	public String addUser(UserEntity userEntity);
+	public Optional<UserDTO> addUser(UserDTO userEntity);
 
-	public String deleteUser(int userId);
+	public void deleteUser(Long userId);
 
-	public UserDTO getUsersById(int userId);
+	public Optional<UserDTO> getUsersById(Long userId);
 
-	public UserDTO getUsersById(String userName);
+	public Optional<UserDTO> getUsersByName(String userName);
+
+	boolean checkUserExistsById(Long userId);
 
 }

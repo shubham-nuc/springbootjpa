@@ -1,81 +1,103 @@
 package com.mycomp.dao.dataservice;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.mycomp.Model.AddressDTO;
 import com.mycomp.Model.UserDTO;
+import com.mycomp.dao.entity.AddressEntity;
 import com.mycomp.dao.entity.UserEntity;
 import com.mycomp.dao.repository.UserRepository;
 
 @Service
 public class UserDataServiceImpl implements IUserDataService {
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
-	@Value("${user.success.msg}")
-	private String successMsg;
-	
-	@Value("${user.delete.msg}")
-	private String deleteMsg;
-	
-	@Value("${no.user.msg}")
-	private String noUserMsg;
 
-	List<UserDTO> users=new ArrayList<>();
+	@Autowired
+	private ModelMapper modelMapper;
+	
+
 	@Override
-	public List<UserDTO> getAllUsers() {
-		return users;
+	public Optional<List<UserDTO>> getAllUsers() {
+		List<UserEntity> usersEntities = userRepository.findAll();
+		return Optional.ofNullable(usersEntities.stream().map(user -> mapEntityToDTO(user)).collect(Collectors.toList()));
+
 	}
+
 	@Override
-	public String addUser(UserEntity user) {
-		userRepository.save(user);
-		return successMsg;
+	public Optional<UserDTO> addUser(UserDTO user) {
+		UserEntity userEntity=mapDTOToEntity(user);
+		userEntity=userRepository.save(userEntity);
+		return Optional.ofNullable(modelMapper.map(userEntity, UserDTO.class));
 	}
+	
 	@Override
-	public String deleteUser(int userId) {
-		String message=noUserMsg;
-		ListIterator<UserDTO> itr=users.listIterator();
-		while(itr.hasNext()) {
-			UserDTO user=(UserDTO) itr.next();
-			int id= user.getId();
-			if(id==userId) {
-				users.remove(user);
-				message=deleteMsg;
-				break;
-			}
+	public boolean checkUserExistsById(Long userId) {
+		return userRepository.existsById(userId);
+	}
+
+	@Override
+	public void deleteUser(Long userId) {
+			userRepository.deleteById(userId);
+	}
+
+	@Override
+	public Optional<UserDTO> getUsersById(Long userId) {
+		Optional<UserEntity> userEntity = userRepository.findById(userId);
+		if (userEntity.isPresent()) {
+			return Optional.of(modelMapper.map(userEntity.get(), UserDTO.class));
 		}
-		return message;
+		return Optional.empty();
 	}
+
 	@Override
-	public UserDTO getUsersById(int userId) {
-		ListIterator<UserDTO> itr=users.listIterator();
-		while(itr.hasNext()) {
-			UserDTO user=(UserDTO) itr.next();
-			int id= user.getId();
-			if(id==userId) {
-				return user;
-			}
+	public Optional<UserDTO> getUsersByName(String userName) {
+		Optional<UserEntity> userEntity = userRepository.findByNameIgnoreCase(userName);
+		if (userEntity.isPresent()) {
+			return Optional.of(modelMapper.map(userEntity.get(), UserDTO.class));
 		}
-		return null;
+		return Optional.empty();
 	}
-	@Override
-	public UserDTO getUsersById(String userName) {
-		ListIterator<UserDTO> itr=users.listIterator();
-		while(itr.hasNext()) {
-			UserDTO user=(UserDTO) itr.next();
-			String name= user.getName();
-			if(userName.equalsIgnoreCase(name)) {
-				return user;
-			}
+	
+	private UserDTO mapEntityToDTO(UserEntity source) {
+		UserDTO userDTO=new UserDTO();
+		userDTO.setId(source.getId());
+		userDTO.setAge(source.getAge());
+		userDTO.setName(source.getName());
+		List<AddressEntity> addressList=source.getAddressList();
+		List<AddressDTO> addressDTOList=new ArrayList<AddressDTO>();
+		for(AddressEntity address:addressList) {
+			AddressDTO addressDTO=modelMapper.map(address, AddressDTO.class);
+			addressDTOList.add(addressDTO);
 		}
-		return null;
+		userDTO.setAddressList(addressDTOList);
+		return userDTO;
+	}
+	
+	private UserEntity mapDTOToEntity(UserDTO source) {
+		UserEntity userEntity=new UserEntity();
+		//userEntity.setId(source.getId());
+		userEntity.setAge(source.getAge());
+		userEntity.setName(source.getName());
+		List<AddressDTO> addressList=source.getAddressList();
+		List<AddressEntity> addressDTOList=new ArrayList<AddressEntity>();
+		for(AddressDTO address:addressList) {
+			AddressEntity addressEntity=modelMapper.map(address, AddressEntity.class);
+			//addressEntity.setUser123(userEntity);
+			addressDTOList.add(addressEntity);
+		}
+		userEntity.setAddressList(addressDTOList);
+		return userEntity;
 	}
 
 }

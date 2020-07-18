@@ -1,0 +1,6 @@
+2020-07-17 00:12:07 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "TEST" already exists; SQL statement:
+CREATE TABLE TEST(ID INT PRIMARY KEY, NAME VARCHAR(255)) [42101-200]
+2020-07-17 00:12:07 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SG_USERS_ADDRESS_LIST[*]"; expected "SET, SAVEPOINT, SCRIPT, SHUTDOWN, SHOW"; SQL statement:
+SG_USERS_ADDRESS_LIST [42001-200]

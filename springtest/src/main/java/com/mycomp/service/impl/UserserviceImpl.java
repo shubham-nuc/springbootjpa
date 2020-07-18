@@ -1,49 +1,63 @@
 package com.mycomp.service.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.mycomp.Model.AddressDTO;
 import com.mycomp.Model.UserDTO;
 import com.mycomp.dao.dataservice.IUserDataService;
-import com.mycomp.dao.entity.UserEntity;
 import com.mycomp.service.IUserService;
 
 @Service
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class UserserviceImpl implements IUserService {
 	
 	@Autowired
 	private IUserDataService userDataService;
-	
-	@Autowired
-	private ModelMapper modelMapper;
+
+	@Value("${user.delete.msg}")
+	private String deleteMsg;
+
+	@Value("${no.user.msg}")
+	private String noUserMsg;
 
 	@Override
-	public List<UserDTO> getAllUsers() {
+	public Optional<List<UserDTO>> getAllUsers() {
 		return userDataService.getAllUsers();
 	}
 
 	@Override
-	public String addUser(UserDTO user) {
-		UserEntity userEntity=modelMapper.map(user, UserEntity.class);
-		return userDataService.addUser(userEntity);
+	public Optional<UserDTO> addUser(UserDTO user) {
+		 return userDataService.addUser(user);
 	}
 
 	@Override
-	public String deleteUser(int userId) {
-		return userDataService.deleteUser(userId);
+	public String deleteUser(Long userId) {
+		boolean isUserExist = userDataService.checkUserExistsById(userId);
+		if (isUserExist) {
+			userDataService.deleteUser(userId);
+			return deleteMsg;
+		}
+		return noUserMsg;
 	}
 
 	@Override
-	public UserDTO getUsersById(int userId) {
+	public Optional<UserDTO> getUsersById(Long userId) {
 		return userDataService.getUsersById(userId);
 	}
 
 	@Override
-	public UserDTO getUsersByName(String userName) {
-		return userDataService.getUsersById(userName);
+	public Optional<UserDTO> getUsersByName(String userName) {
+		return userDataService.getUsersByName(userName);
 	}
 
 }
